@@ -8,6 +8,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
 import ru.yandex.yamblz.ui.adapters.ItemTouchHelperAdapter;
+import timber.log.Timber;
 
 
 /**
@@ -23,6 +24,7 @@ public class ContentItemTouchHelperCallback extends ItemTouchHelper.Callback {
         redPaint = new Paint();
         redPaint.setColor(Color.RED);
     }
+
     @Override
     public int getMovementFlags(RecyclerView recyclerView,
                                 RecyclerView.ViewHolder viewHolder) {
@@ -40,6 +42,7 @@ public class ContentItemTouchHelperCallback extends ItemTouchHelper.Callback {
                 target.getAdapterPosition());
         return true;
     }
+
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder,
                          int direction) {
@@ -66,7 +69,7 @@ public class ContentItemTouchHelperCallback extends ItemTouchHelper.Callback {
             itemView.setTranslationX(dX);
             redPaint.setAlpha((int) (alpha * 255));
             c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
-                        (float) itemView.getBottom(), redPaint);
+                    (float) itemView.getBottom(), redPaint);
         } else {
             super.onChildDraw(c, recyclerView, viewHolder, dX, dY,
                     actionState, isCurrentlyActive);

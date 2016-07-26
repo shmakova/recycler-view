@@ -3,6 +3,7 @@ package ru.yandex.yamblz.ui.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -26,6 +27,7 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
     Spinner spinner;
 
     private GridLayoutManager gridLayoutManager;
+    private DefaultItemAnimator defaultItemAnimator = new DefaultItemAnimator();
 
     @NonNull
     @Override
@@ -45,10 +47,13 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
         spinner.setAdapter(spinnerAdapter);
 
         gridLayoutManager = new GridLayoutManager(getContext(), 1);
+        gridLayoutManager.supportsPredictiveItemAnimations();
 
         rv.setLayoutManager(gridLayoutManager);
         ContentAdapter contentAdapter = new ContentAdapter();
         rv.setAdapter(contentAdapter);
+        rv.setItemAnimator(defaultItemAnimator);
+
         ItemTouchHelper.Callback callback =
                 new ContentItemTouchHelperCallback(contentAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
@@ -68,6 +73,5 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-
 
 }

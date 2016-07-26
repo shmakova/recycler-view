@@ -22,7 +22,15 @@ class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> 
 
     @Override
     public ContentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ContentHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.content_item, parent, false));
+        View container = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_item, parent, false);
+        ContentHolder contentHolder = new ContentHolder(container);
+        container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemChange(contentHolder.getAdapterPosition());
+            }
+        });
+        return contentHolder;
     }
 
     @Override
@@ -37,10 +45,15 @@ class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> 
 
     private Integer createColorForPosition(int position) {
         if (position >= colors.size()) {
-            colors.add(Color.rgb(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255)));
+            colors.add(generateColor());
         }
         return colors.get(position);
     }
+
+    private Integer generateColor() {
+        return Color.rgb(rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
+    }
+
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
@@ -61,6 +74,15 @@ class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> 
     public void onItemDismiss(int position) {
         colors.remove(position);
         notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onItemChange(int position) {
+        if (position != RecyclerView.NO_POSITION) {
+            int color = generateColor();
+            colors.set(position, color);
+            notifyItemChanged(position);
+        }
     }
 
     static class ContentHolder extends RecyclerView.ViewHolder {
