@@ -12,22 +12,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Spinner;
 
 import butterknife.BindView;
 import ru.yandex.yamblz.R;
+import ru.yandex.yamblz.ui.other.ContentItemDecoration;
 import ru.yandex.yamblz.ui.other.ContentItemTouchHelperCallback;
 import timber.log.Timber;
 
-public class ContentFragment extends BaseFragment implements AdapterView.OnItemSelectedListener {
+public class ContentFragment extends BaseFragment implements AdapterView.OnItemSelectedListener,
+        CompoundButton.OnCheckedChangeListener {
+    private static final int MAX_SPAN_COUNT = 50;
 
     @BindView(R.id.rv)
     RecyclerView rv;
     @BindView(R.id.spinner)
     Spinner spinner;
+    @BindView(R.id.decoration_checkbox)
+    CheckBox decorationCheckbox;
 
     private GridLayoutManager gridLayoutManager;
     private DefaultItemAnimator defaultItemAnimator = new DefaultItemAnimator();
+    private RecyclerView.ItemDecoration contentItemDecoration;
 
     @NonNull
     @Override
@@ -40,11 +48,14 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Integer[] items = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        Integer[] items = range(1, MAX_SPAN_COUNT);
         ArrayAdapter<Integer> spinnerAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_spinner_item, items);
         spinner.setOnItemSelectedListener(this);
         spinner.setAdapter(spinnerAdapter);
+
+        contentItemDecoration = new ContentItemDecoration(getContext());
+        decorationCheckbox.setOnCheckedChangeListener(this);
 
         gridLayoutManager = new GridLayoutManager(getContext(), 1);
         gridLayoutManager.supportsPredictiveItemAnimations();
@@ -57,6 +68,7 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
         ItemTouchHelper.Callback callback =
                 new ContentItemTouchHelperCallback(contentAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+
         touchHelper.attachToRecyclerView(rv);
 
     }
@@ -74,4 +86,23 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
 
     }
 
+    private static Integer[] range(int min, int max) {
+        int size = max - min + 1;
+        Integer[] array = new Integer[size];
+
+        for (int i = 0; i < size; i++) {
+            array[i] = min + i;
+        }
+
+        return array;
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+            rv.addItemDecoration(contentItemDecoration);
+        } else {
+            rv.removeItemDecoration(contentItemDecoration);
+        }
+    }
 }

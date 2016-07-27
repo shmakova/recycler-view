@@ -14,11 +14,14 @@ import java.util.Random;
 
 import ru.yandex.yamblz.R;
 import ru.yandex.yamblz.ui.adapters.ItemTouchHelperAdapter;
+import timber.log.Timber;
 
 class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> implements ItemTouchHelperAdapter {
 
     private final Random rnd = new Random();
     private final List<Integer> colors = new ArrayList<>();
+    private int firstSelectedItemPosition = -1;
+    private int secondSelectedItemPosition = -1;
 
     @Override
     public ContentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -28,6 +31,14 @@ class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> 
             @Override
             public void onClick(View v) {
                 onItemChange(contentHolder.getAdapterPosition());
+            }
+        });
+        container.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Timber.d(String.valueOf(contentHolder.getAdapterPosition()));
+                firstSelectedItemPosition = contentHolder.getAdapterPosition();
+                return false;
             }
         });
         return contentHolder;
@@ -57,6 +68,12 @@ class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> 
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
+        Timber.d("From " + String.valueOf(fromPosition) + " TO " +  String.valueOf(toPosition));
+
+        if (secondSelectedItemPosition < 0 && firstSelectedItemPosition > 0) {
+            secondSelectedItemPosition = toPosition;
+        }
+
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
                 Collections.swap(colors, i, i + 1);

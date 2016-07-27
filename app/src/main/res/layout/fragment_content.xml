@@ -16,8 +16,16 @@
 
         <Spinner
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:id="@+id/spinner"
+            android:layout_weight="1"/>
+
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/decoration_checkbox"
+            android:text="Decoration"
+            android:checked="false"
             android:layout_weight="1"/>
 
     </LinearLayout>
