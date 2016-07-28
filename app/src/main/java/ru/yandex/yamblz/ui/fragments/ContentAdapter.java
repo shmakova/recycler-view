@@ -15,7 +15,6 @@ import java.util.Random;
 
 import ru.yandex.yamblz.R;
 import ru.yandex.yamblz.ui.other.ItemTouchHelperAdapter;
-import timber.log.Timber;
 
 public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> implements ItemTouchHelperAdapter {
 
@@ -82,9 +81,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
             firstReplacedItemPosition = fromPosition;
             lastReplacedItemPosition = toPosition;
 
-            Timber.d("add icon to=" + String.valueOf(fromPosition));
             ((ContentHolder) viewHolder).addIcon();
-            Timber.d("add icon to=" + String.valueOf(toPosition));
             ((ContentHolder) target).addIcon();
 
             notifyItemMoved(fromPosition, toPosition);
