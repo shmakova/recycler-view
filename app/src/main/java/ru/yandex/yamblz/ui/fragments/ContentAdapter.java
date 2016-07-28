@@ -66,6 +66,14 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
         int fromPosition = viewHolder.getAdapterPosition();
         int toPosition = target.getAdapterPosition();
 
+        clearLastSelections(recyclerView);
+        firstReplacedItemPosition = fromPosition;
+        lastReplacedItemPosition = toPosition;
+
+        ((ContentHolder) viewHolder).addIcon();
+        ((ContentHolder) target).addIcon();
+
+
         if (fromPosition != toPosition) {
             if (fromPosition < toPosition) {
                 for (int i = fromPosition; i < toPosition; i++) {
@@ -76,14 +84,6 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
                     Collections.swap(colors, i, i - 1);
                 }
             }
-
-            clearLastSelections(recyclerView);
-            firstReplacedItemPosition = fromPosition;
-            lastReplacedItemPosition = toPosition;
-
-            ((ContentHolder) viewHolder).addIcon();
-            ((ContentHolder) target).addIcon();
-
             notifyItemMoved(fromPosition, toPosition);
         }
     }
@@ -101,10 +101,6 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
         if (lastReplacedItem != null) {
             lastReplacedItem.removeIcon();
         }
-
-        notifyItemRangeChanged(((GridLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition(),
-                ((GridLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition() -
-                        ((GridLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition());
     }
 
     @Override
