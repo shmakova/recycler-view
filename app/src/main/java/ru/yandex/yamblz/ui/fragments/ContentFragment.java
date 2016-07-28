@@ -18,8 +18,10 @@ import android.widget.Spinner;
 
 import butterknife.BindView;
 import ru.yandex.yamblz.R;
+import ru.yandex.yamblz.ui.other.ContentItemAnimator;
 import ru.yandex.yamblz.ui.other.ContentItemDecoration;
 import ru.yandex.yamblz.ui.other.ContentItemTouchHelperCallback;
+import ru.yandex.yamblz.ui.other.PairItemDecoration;
 import timber.log.Timber;
 
 public class ContentFragment extends BaseFragment implements AdapterView.OnItemSelectedListener,
@@ -34,8 +36,9 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
     CheckBox decorationCheckbox;
 
     private GridLayoutManager gridLayoutManager;
-    private DefaultItemAnimator defaultItemAnimator = new DefaultItemAnimator();
-    private RecyclerView.ItemDecoration contentItemDecoration;
+    private ContentItemAnimator contentItemAnimator = new ContentItemAnimator();
+    private ContentItemDecoration contentItemDecoration;
+    private PairItemDecoration pairItemDecoration;
 
     @NonNull
     @Override
@@ -55,6 +58,9 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
         spinner.setAdapter(spinnerAdapter);
 
         contentItemDecoration = new ContentItemDecoration();
+        pairItemDecoration = new PairItemDecoration(getContext());
+        rv.addItemDecoration(pairItemDecoration);
+
         decorationCheckbox.setOnCheckedChangeListener(this);
 
         gridLayoutManager = new GridLayoutManager(getContext(), 1);
@@ -62,10 +68,10 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
         rv.setLayoutManager(gridLayoutManager);
         ContentAdapter contentAdapter = new ContentAdapter();
         rv.setAdapter(contentAdapter);
-        rv.setItemAnimator(defaultItemAnimator);
+        rv.setItemAnimator(contentItemAnimator);
 
         ItemTouchHelper.Callback callback =
-                new ContentItemTouchHelperCallback(contentAdapter);
+                new ContentItemTouchHelperCallback(contentAdapter, pairItemDecoration);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
 
         touchHelper.attachToRecyclerView(rv);

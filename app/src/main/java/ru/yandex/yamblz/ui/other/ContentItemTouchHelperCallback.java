@@ -14,10 +14,13 @@ import android.view.View;
 
 public class ContentItemTouchHelperCallback extends ItemTouchHelper.Callback {
     private final ItemTouchHelperAdapter adapter;
+    private final PairItemDecoration pairItemDecoration;
     private Paint redPaint;
 
-    public ContentItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
+    public ContentItemTouchHelperCallback(ItemTouchHelperAdapter adapter,
+                                          PairItemDecoration pairItemDecoration) {
         this.adapter = adapter;
+        this.pairItemDecoration = pairItemDecoration;
         redPaint = new Paint();
         redPaint.setColor(Color.RED);
     }
@@ -35,14 +38,16 @@ public class ContentItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public boolean onMove(RecyclerView recyclerView,
                           RecyclerView.ViewHolder viewHolder,
                           RecyclerView.ViewHolder target) {
-        adapter.onItemMove(recyclerView, viewHolder, target);
+        adapter.onItemMove(recyclerView, viewHolder.getAdapterPosition(), target.getAdapterPosition());
+        pairItemDecoration.setFirstItemPosition(viewHolder.getAdapterPosition());
+        pairItemDecoration.setLastItemPosition(target.getAdapterPosition());
         return true;
     }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder,
                          int direction) {
-        adapter.onItemDismiss(viewHolder);
+        adapter.onItemDismiss(viewHolder.getAdapterPosition());
     }
 
     @Override

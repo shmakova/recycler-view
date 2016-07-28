@@ -7,10 +7,10 @@ import android.support.v7.widget.RecyclerView;
  */
 
 public interface ItemTouchHelperAdapter {
-    void onItemMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
-                    RecyclerView.ViewHolder target);
+    void onItemMove(RecyclerView recyclerView, int fromPosition,
+                    int toPosition);
 
-    void onItemDismiss(RecyclerView.ViewHolder viewHolder);
+    void onItemDismiss(int position);
 
-    void onItemChange(RecyclerView.ViewHolder viewHolder);
+    void onItemChange(int position);
 }

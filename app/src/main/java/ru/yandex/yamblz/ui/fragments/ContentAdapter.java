@@ -1,7 +1,6 @@
 package ru.yandex.yamblz.ui.fragments;
 
 import android.graphics.Color;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,27 +19,18 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
 
     private final Random rnd = new Random();
     private final List<Integer> colors = new ArrayList<>();
-    private int firstReplacedItemPosition = -1;
-    private int lastReplacedItemPosition = -1;
-
 
     @Override
     public ContentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View container = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_item, parent, false);
         ContentHolder contentHolder = new ContentHolder(container);
-        container.setOnClickListener(v -> onItemChange(contentHolder));
+        container.setOnClickListener(v -> onItemChange(contentHolder.getAdapterPosition()));
         return contentHolder;
     }
 
     @Override
     public void onBindViewHolder(ContentHolder holder, int position) {
         holder.bind(createColorForPosition(position));
-
-        if (position == firstReplacedItemPosition || position == lastReplacedItemPosition) {
-            holder.addIcon();
-        } else {
-            holder.removeIcon();
-        }
     }
 
     @Override
@@ -61,20 +51,9 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
 
 
     @Override
-    public void onItemMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
-                           RecyclerView.ViewHolder target) {
-        int fromPosition = viewHolder.getAdapterPosition();
-        int toPosition = target.getAdapterPosition();
-
-        clearLastSelections(recyclerView);
-        firstReplacedItemPosition = fromPosition;
-        lastReplacedItemPosition = toPosition;
-
-        ((ContentHolder) viewHolder).addIcon();
-        ((ContentHolder) target).addIcon();
-
-
-        if (fromPosition != toPosition) {
+    public void onItemMove(RecyclerView recyclerView, int fromPosition, int toPosition) {
+        if (fromPosition != RecyclerView.NO_POSITION &&
+                toPosition != RecyclerView.NO_POSITION) {
             if (fromPosition < toPosition) {
                 for (int i = fromPosition; i < toPosition; i++) {
                     Collections.swap(colors, i, i + 1);
@@ -84,36 +63,22 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
                     Collections.swap(colors, i, i - 1);
                 }
             }
+
             notifyItemMoved(fromPosition, toPosition);
         }
     }
 
-    private void clearLastSelections(RecyclerView recyclerView) {
-        ContentHolder firstReplacedItem = (ContentHolder) recyclerView
-                .findViewHolderForAdapterPosition(firstReplacedItemPosition);
-        ContentHolder lastReplacedItem = (ContentHolder) recyclerView
-                .findViewHolderForAdapterPosition(lastReplacedItemPosition);
 
-        if (firstReplacedItem != null) {
-            firstReplacedItem.removeIcon();
-        }
-
-        if (lastReplacedItem != null) {
-            lastReplacedItem.removeIcon();
+    @Override
+    public void onItemDismiss(int position) {
+        if (position != RecyclerView.NO_POSITION) {
+            colors.remove(position);
+            notifyItemRemoved(position);
         }
     }
 
     @Override
-    public void onItemDismiss(RecyclerView.ViewHolder viewHolder) {
-        int position = viewHolder.getAdapterPosition();
-        colors.remove(position);
-        notifyItemRemoved(position);
-    }
-
-    @Override
-    public void onItemChange(RecyclerView.ViewHolder viewHolder) {
-        int position = viewHolder.getAdapterPosition();
-
+    public void onItemChange(int position) {
         if (position != RecyclerView.NO_POSITION) {
             int color = generateColor();
             colors.set(position, color);
@@ -129,16 +94,6 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
         void bind(Integer color) {
             itemView.setBackgroundColor(color);
             ((TextView) itemView).setText("#".concat(Integer.toHexString(color).substring(2)));
-        }
-
-        public void addIcon() {
-            ((TextView) itemView).setCompoundDrawablesWithIntrinsicBounds(
-                    0, 0, R.drawable.ic_check_circle_black_24dp, 0);
-        }
-
-        public void removeIcon() {
-            ((TextView) itemView).setCompoundDrawablesWithIntrinsicBounds(
-                    0, 0, 0, 0);
         }
     }
 }
