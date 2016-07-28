@@ -3,7 +3,6 @@ package ru.yandex.yamblz.ui.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -67,6 +66,7 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
 
         rv.setLayoutManager(gridLayoutManager);
         ContentAdapter contentAdapter = new ContentAdapter();
+        contentAdapter.setHasStableIds(true);
         rv.setAdapter(contentAdapter);
         rv.setItemAnimator(contentItemAnimator);
 
@@ -81,7 +81,6 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         int spanCount = Integer.valueOf(parent.getItemAtPosition(position).toString());
-        Timber.d(String.valueOf(spanCount));
         gridLayoutManager.setSpanCount(spanCount);
         rv.getAdapter().notifyDataSetChanged();
     }

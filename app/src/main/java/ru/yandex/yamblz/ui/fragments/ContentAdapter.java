@@ -38,6 +38,12 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
         return Integer.MAX_VALUE;
     }
 
+    @Override
+    public long getItemId(int position) {
+        createColorForPosition(position);
+        return colors.get(position);
+    }
+
     private Integer createColorForPosition(int position) {
         if (position >= colors.size()) {
             colors.add(generateColor());
