@@ -1,6 +1,7 @@
 package ru.yandex.yamblz.ui.fragments;
 
 import android.graphics.Color;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,19 +29,14 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
     public ContentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View container = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_item, parent, false);
         ContentHolder contentHolder = new ContentHolder(container);
-        container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onItemChange(contentHolder);
-            }
-        });
+        container.setOnClickListener(v -> onItemChange(contentHolder));
         return contentHolder;
     }
 
     @Override
     public void onBindViewHolder(ContentHolder holder, int position) {
         holder.bind(createColorForPosition(position));
-        Timber.d(String.valueOf(position));
+
         if (position == firstReplacedItemPosition || position == lastReplacedItemPosition) {
             holder.addIcon();
         } else {
@@ -68,6 +64,34 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
     @Override
     public void onItemMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
                            RecyclerView.ViewHolder target) {
+        int fromPosition = viewHolder.getAdapterPosition();
+        int toPosition = target.getAdapterPosition();
+
+        if (fromPosition != toPosition) {
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(colors, i, i + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(colors, i, i - 1);
+                }
+            }
+
+            clearLastSelections(recyclerView);
+            firstReplacedItemPosition = fromPosition;
+            lastReplacedItemPosition = toPosition;
+
+            Timber.d("add icon to=" + String.valueOf(fromPosition));
+            ((ContentHolder) viewHolder).addIcon();
+            Timber.d("add icon to=" + String.valueOf(toPosition));
+            ((ContentHolder) target).addIcon();
+
+            notifyItemMoved(fromPosition, toPosition);
+        }
+    }
+
+    private void clearLastSelections(RecyclerView recyclerView) {
         ContentHolder firstReplacedItem = (ContentHolder) recyclerView
                 .findViewHolderForAdapterPosition(firstReplacedItemPosition);
         ContentHolder lastReplacedItem = (ContentHolder) recyclerView
@@ -81,26 +105,9 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
             lastReplacedItem.removeIcon();
         }
 
-        int fromPosition = viewHolder.getAdapterPosition();
-        int toPosition = target.getAdapterPosition();
-
-        firstReplacedItemPosition = fromPosition;
-        lastReplacedItemPosition = toPosition;
-
-        ((ContentHolder) viewHolder).addIcon();
-        ((ContentHolder) target).addIcon();
-
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(colors, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(colors, i, i - 1);
-            }
-        }
-
-        notifyItemMoved(fromPosition, toPosition);
+        notifyItemRangeChanged(((GridLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition(),
+                ((GridLayoutManager)recyclerView.getLayoutManager()).findLastVisibleItemPosition() -
+                        ((GridLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition());
     }
 
     @Override
