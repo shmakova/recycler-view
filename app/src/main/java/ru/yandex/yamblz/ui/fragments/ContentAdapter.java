@@ -13,15 +13,16 @@ import java.util.List;
 import java.util.Random;
 
 import ru.yandex.yamblz.R;
-import ru.yandex.yamblz.ui.adapters.ItemTouchHelperAdapter;
+import ru.yandex.yamblz.ui.other.ItemTouchHelperAdapter;
 import timber.log.Timber;
 
-class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> implements ItemTouchHelperAdapter {
+public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> implements ItemTouchHelperAdapter {
 
     private final Random rnd = new Random();
     private final List<Integer> colors = new ArrayList<>();
-    private int firstSelectedItemPosition = -1;
-    private int secondSelectedItemPosition = -1;
+    private int firstReplacedItemPosition = -1;
+    private int lastReplacedItemPosition = -1;
+
 
     @Override
     public ContentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -30,15 +31,7 @@ class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> 
         container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onItemChange(contentHolder.getAdapterPosition());
-            }
-        });
-        container.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Timber.d(String.valueOf(contentHolder.getAdapterPosition()));
-                firstSelectedItemPosition = contentHolder.getAdapterPosition();
-                return false;
+                onItemChange(contentHolder);
             }
         });
         return contentHolder;
@@ -47,6 +40,12 @@ class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> 
     @Override
     public void onBindViewHolder(ContentHolder holder, int position) {
         holder.bind(createColorForPosition(position));
+        Timber.d(String.valueOf(position));
+        if (position == firstReplacedItemPosition || position == lastReplacedItemPosition) {
+            holder.addIcon();
+        } else {
+            holder.removeIcon();
+        }
     }
 
     @Override
@@ -67,12 +66,29 @@ class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> 
 
 
     @Override
-    public void onItemMove(int fromPosition, int toPosition) {
-        Timber.d("From " + String.valueOf(fromPosition) + " TO " +  String.valueOf(toPosition));
+    public void onItemMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                           RecyclerView.ViewHolder target) {
+        ContentHolder firstReplacedItem = (ContentHolder) recyclerView
+                .findViewHolderForAdapterPosition(firstReplacedItemPosition);
+        ContentHolder lastReplacedItem = (ContentHolder) recyclerView
+                .findViewHolderForAdapterPosition(lastReplacedItemPosition);
 
-        if (secondSelectedItemPosition < 0 && firstSelectedItemPosition > 0) {
-            secondSelectedItemPosition = toPosition;
+        if (firstReplacedItem != null) {
+            firstReplacedItem.removeIcon();
         }
+
+        if (lastReplacedItem != null) {
+            lastReplacedItem.removeIcon();
+        }
+
+        int fromPosition = viewHolder.getAdapterPosition();
+        int toPosition = target.getAdapterPosition();
+
+        firstReplacedItemPosition = fromPosition;
+        lastReplacedItemPosition = toPosition;
+
+        ((ContentHolder) viewHolder).addIcon();
+        ((ContentHolder) target).addIcon();
 
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
@@ -88,13 +104,16 @@ class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> 
     }
 
     @Override
-    public void onItemDismiss(int position) {
+    public void onItemDismiss(RecyclerView.ViewHolder viewHolder) {
+        int position = viewHolder.getAdapterPosition();
         colors.remove(position);
         notifyItemRemoved(position);
     }
 
     @Override
-    public void onItemChange(int position) {
+    public void onItemChange(RecyclerView.ViewHolder viewHolder) {
+        int position = viewHolder.getAdapterPosition();
+
         if (position != RecyclerView.NO_POSITION) {
             int color = generateColor();
             colors.set(position, color);
@@ -102,7 +121,7 @@ class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> 
         }
     }
 
-    static class ContentHolder extends RecyclerView.ViewHolder {
+    public static class ContentHolder extends RecyclerView.ViewHolder {
         ContentHolder(View itemView) {
             super(itemView);
         }
@@ -110,6 +129,16 @@ class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentHolder> 
         void bind(Integer color) {
             itemView.setBackgroundColor(color);
             ((TextView) itemView).setText("#".concat(Integer.toHexString(color).substring(2)));
+        }
+
+        public void addIcon() {
+            ((TextView) itemView).setCompoundDrawablesWithIntrinsicBounds(
+                    0, 0, R.drawable.ic_check_circle_black_24dp, 0);
+        }
+
+        public void removeIcon() {
+            ((TextView) itemView).setCompoundDrawablesWithIntrinsicBounds(
+                    0, 0, 0, 0);
         }
     }
 }

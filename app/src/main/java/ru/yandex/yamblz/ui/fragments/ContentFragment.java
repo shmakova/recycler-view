@@ -54,11 +54,10 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
         spinner.setOnItemSelectedListener(this);
         spinner.setAdapter(spinnerAdapter);
 
-        contentItemDecoration = new ContentItemDecoration(getContext());
+        contentItemDecoration = new ContentItemDecoration();
         decorationCheckbox.setOnCheckedChangeListener(this);
 
         gridLayoutManager = new GridLayoutManager(getContext(), 1);
-        gridLayoutManager.supportsPredictiveItemAnimations();
 
         rv.setLayoutManager(gridLayoutManager);
         ContentAdapter contentAdapter = new ContentAdapter();

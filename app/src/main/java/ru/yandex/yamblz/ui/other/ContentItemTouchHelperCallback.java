@@ -7,9 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-import ru.yandex.yamblz.ui.adapters.ItemTouchHelperAdapter;
-import timber.log.Timber;
-
 
 /**
  * Created by shmakova on 26.07.16.
@@ -38,15 +35,14 @@ public class ContentItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public boolean onMove(RecyclerView recyclerView,
                           RecyclerView.ViewHolder viewHolder,
                           RecyclerView.ViewHolder target) {
-        adapter.onItemMove(viewHolder.getAdapterPosition(),
-                target.getAdapterPosition());
+        adapter.onItemMove(recyclerView, viewHolder, target);
         return true;
     }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder,
                          int direction) {
-        adapter.onItemDismiss(viewHolder.getAdapterPosition());
+        adapter.onItemDismiss(viewHolder);
     }
 
     @Override

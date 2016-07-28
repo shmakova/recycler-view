@@ -1,6 +1,5 @@
 package ru.yandex.yamblz.ui.other;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,7 +15,7 @@ public class ContentItemDecoration extends RecyclerView.ItemDecoration {
     private Paint paintBorder;
 
 
-    public ContentItemDecoration(Context c) {
+    public ContentItemDecoration() {
         paintBorder = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintBorder.setColor(Color.DKGRAY);
         paintBorder.setStyle(Paint.Style.STROKE);
@@ -40,8 +39,6 @@ public class ContentItemDecoration extends RecyclerView.ItemDecoration {
                         layoutManager.getDecoratedBottom(child) - OFFSET / 2,
                         paintBorder);
             }
-
         }
-
     }
 }
