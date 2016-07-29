@@ -21,7 +21,6 @@ import ru.yandex.yamblz.ui.other.ContentItemAnimator;
 import ru.yandex.yamblz.ui.other.ContentItemDecoration;
 import ru.yandex.yamblz.ui.other.ContentItemTouchHelperCallback;
 import ru.yandex.yamblz.ui.other.PairItemDecoration;
-import timber.log.Timber;
 
 public class ContentFragment extends BaseFragment implements AdapterView.OnItemSelectedListener,
         CompoundButton.OnCheckedChangeListener {
