@@ -67,6 +67,7 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
         ContentAdapter contentAdapter = new ContentAdapter();
         rv.setAdapter(contentAdapter);
         rv.setItemAnimator(contentItemAnimator);
+        rv.setHasFixedSize(true);
 
         ItemTouchHelper.Callback callback =
                 new ContentItemTouchHelperCallback(contentAdapter, pairItemDecoration);
