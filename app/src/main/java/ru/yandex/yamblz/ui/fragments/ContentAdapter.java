@@ -74,7 +74,6 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
         }
     }
 
-
     @Override
     public void onItemDismiss(int position) {
         if (position != RecyclerView.NO_POSITION) {

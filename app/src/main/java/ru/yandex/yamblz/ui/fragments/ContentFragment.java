@@ -65,7 +65,6 @@ public class ContentFragment extends BaseFragment implements AdapterView.OnItemS
 
         rv.setLayoutManager(gridLayoutManager);
         ContentAdapter contentAdapter = new ContentAdapter();
-        contentAdapter.setHasStableIds(true);
         rv.setAdapter(contentAdapter);
         rv.setItemAnimator(contentItemAnimator);
 
