@@ -22,10 +22,10 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
 
     @Override
     public ContentHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View container = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_item, parent, false);
-        ContentHolder contentHolder = new ContentHolder(container);
-        container.setOnClickListener(v -> onItemChange(contentHolder.getAdapterPosition()));
-        return contentHolder;
+        View container = LayoutInflater
+                .from(parent.getContext())
+                .inflate(R.layout.content_item, parent, false);
+        return new ContentHolder(container);
     }
 
     @Override
@@ -91,9 +91,10 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentAdapter.ContentH
         }
     }
 
-    public static class ContentHolder extends RecyclerView.ViewHolder {
+    public class ContentHolder extends RecyclerView.ViewHolder {
         ContentHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(v -> onItemChange(getAdapterPosition()));
         }
 
         void bind(Integer color) {
